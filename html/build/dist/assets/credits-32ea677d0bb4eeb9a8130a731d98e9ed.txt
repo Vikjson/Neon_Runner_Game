@@ -1,0 +1,156 @@
+PUBLISHER
+
+RamAB
+Vandelay Industries
+
+
+EXECUTIVE PRODUCER
+
+Hampus Ram
+
+
+PRODUCER
+
+Hang Phan
+Tobias Tuvebäck
+Viktoria Johansson
+Felix Andersson
+
+
+GAME DIRECTOR
+
+Hang Phan
+Tobias Tuvebäck
+Viktoria Johansson
+Felix Andersson
+
+
+TECHNICAL DIRECTORS
+
+Hang Phan
+Tobias Tuvebäck
+Viktoria Johansson
+Felix Andersson
+
+
+PROGRAMMERS
+
+Hang Phan
+Tobias Tuvebäck
+Viktoria Johansson
+Felix Andersson
+
+
+ARTWORK
+
+Viktoria Johansson
+
+
+SOUND COMPOSER
+
+Felix Andersson
+
+
+LEVEL DESIGNER
+
+Hang Phan
+
+
+CREATIVE DIRECTOR
+
+Viktoria Johansson
+
+
+MASTER OF MENUS
+
+Tobias Tuvebäck
+
+
+TEST DIRECTOR
+
+Hang Phan
+
+
+COPYWRITER
+
+Felix Andersson
+
+
+DATABASE EXECUTIVE
+
+Tobias Tuvebäck
+
+
+SYSTEM ARCHITECT
+
+Felix Andersson
+
+
+PUBLISHER
+
+Tobias Tuvebäck
+
+
+COORDINATORS
+
+Hang Phan
+Tobias Tuvebäck
+Viktoria Johansson
+Felix Andersson
+
+
+THANKS TO
+
+Yrgo
+Göteborg Stad
+The people at LibGDX
+The crazy bastards at IntelliJ
+Team VSCode
+Gulan
+Nocco
+Jacques Gepetto
+Joe Bilout
+Flappy Bird
+Franz Beckenbauer
+
+
+SPECIAL THANKS TO
+
+Women in tech
+Frölunda HC
+CryptoCats
+Ted the dawg
+Our friends and families
+Those who believed in us
+Those who didn't believe in us
+- You pushed us to greatness
+
+
+VERY SPECIAL THANKS TO
+
+Hampus Ram
+- without all those millions
+and millions of dollars you've
+pumped into this project this
+game would have never seen the
+light of day.
+
+
+THE MOST SINCERE THANKS TO
+
+You, for playing our game
+
+
+
+
+
+
+
+
+
+
+THIS HAS BEEN A GAME BY
+
+Vandelay industries
+&
+RamAB
