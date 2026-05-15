@@ -195,7 +195,7 @@ sourceSets.main.java.srcDirs = [
 tasks.named("compileGwt") {
   dependsOn(":core:classes")
 }
-/*
+
 tasks.named("generateAssetList").configure {
   doLast {
     def assetsFile = file("war/assets/assets.txt")
@@ -208,7 +208,9 @@ tasks.named("generateAssetList").configure {
     }
   }
 }
+tasks.named("dist") {
+  dependsOn("generateAssetList")
+}
 
- */
 
 eclipse.project.name = appName + "-html"
