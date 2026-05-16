@@ -173,8 +173,12 @@ public class Main extends ApplicationAdapter {
      */
     @Override
     public void create() {
-        if (isMobileWeb() && keyboardBridge != null) {
+        if (isMobileWeb()
+            && keyboardBridge != null
+            && !mobileKeyboardActivated) {
+
             keyboardBridge.enableKeyboard();
+            mobileKeyboardActivated = true;
         }
 
         batch = new SpriteBatch();
@@ -578,13 +582,10 @@ public class Main extends ApplicationAdapter {
             nameStage.draw();
 
             if (isMobileWeb() && keyboardBridge != null) {
-
-                String mobileText = keyboardBridge.getInputText();
-
-                if (!nameField.getText().equals(mobileText)) {
-                    nameField.setText(mobileText);
-                }
+                keyboardBridge.disableKeyboard();
             }
+
+            mobileKeyboardActivated = false;
 
             // ⭐ 1. Ge fokus vid första tangent (MEN inte SPACE/ENTER/mouse)
             if (!nameField.hasKeyboardFocus() && Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
