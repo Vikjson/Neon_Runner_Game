@@ -53,6 +53,17 @@
         return document.getElementById("mobileInput").value;
     }
 
+    function enableMobileKeyboard() {
+        window.mobileKeyboardEnabled = true;
+    }
+
+    function disableMobileKeyboard() {
+        window.mobileKeyboardEnabled = false;
+
+        const input = document.getElementById("mobileInput");
+        input.blur();
+    }
+
 
     function handleMouseDown(evt) {
         evt.preventDefault();
@@ -77,7 +88,11 @@
         handleMouseUp, false);
 
     gameDiv.addEventListener('touchstart', () => {
-        focusMobileInput();
+
+        if (window.mobileKeyboardEnabled) {
+            focusMobileInput();
+        }
+
     }, false);
 
 

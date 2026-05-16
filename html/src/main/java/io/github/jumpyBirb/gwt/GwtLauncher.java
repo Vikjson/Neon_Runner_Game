@@ -36,6 +36,14 @@ public class GwtLauncher extends GwtApplication {
         return $wnd.getMobileInputText();
     }-*/;
 
+    public static native void enableMobileKeyboard() /*-{
+        $wnd.enableMobileKeyboard();
+    }-*/;
+
+    public static native void disableMobileKeyboard() /*-{
+        $wnd.disableMobileKeyboard();
+    }-*/;
+
     private static class HtmlKeyboardBridge
         implements MobileKeyboardBridge {
 
@@ -48,5 +56,17 @@ public class GwtLauncher extends GwtApplication {
         public String getInputText() {
             return getMobileInputText();
         }
+
+        @Override
+        public void enableKeyboard() {
+            enableMobileKeyboard();
+        }
+
+        @Override
+        public void disableKeyboard() {
+            disableMobileKeyboard();
+        }
     }
+
 }
+

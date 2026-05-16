@@ -172,7 +172,9 @@ public class Main extends ApplicationAdapter {
      */
     @Override
     public void create() {
-
+        if (isMobileWeb() && keyboardBridge != null) {
+            keyboardBridge.enableKeyboard();
+        }
 
         batch = new SpriteBatch();
         assets = new GameAssets();
@@ -567,14 +569,13 @@ public class Main extends ApplicationAdapter {
             nameStage.draw();
             if (isMobileWeb() && keyboardBridge != null) {
 
-                nameStage.setKeyboardFocus(nameField);
-
                 String mobileText = keyboardBridge.getInputText();
 
                 if (!nameField.getText().equals(mobileText)) {
                     nameField.setText(mobileText);
                 }
             }
+            gameState = GameState.NAME_INPUT;
 
             // ⭐ 1. Ge fokus vid första tangent (MEN inte SPACE/ENTER/mouse)
             if (!nameField.hasKeyboardFocus() && Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
@@ -599,8 +600,13 @@ public class Main extends ApplicationAdapter {
 
                 playerName = input;
 
+                if (isMobileWeb() && keyboardBridge != null) {
+                    keyboardBridge.disableKeyboard();
+                }
+
                 Gdx.input.setInputProcessor(null);
                 gameState = GameState.INTRO;
+
                 inputGate.block(2f);
                 audio.playIntroMusic();
             }
