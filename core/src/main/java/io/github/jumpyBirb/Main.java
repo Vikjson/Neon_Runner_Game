@@ -127,6 +127,7 @@ public class Main extends ApplicationAdapter {
     private static final float DYING_DURATION = 1.2f;
     private boolean sound = true;
     private boolean music = true;
+    private boolean audioUnlocked = false;
     private GameState previousState = null;
 
     private boolean gameHasStarted = false;
@@ -458,6 +459,10 @@ public class Main extends ApplicationAdapter {
 
         inputGate.update(delta);
 
+        if (!audioUnlocked && touchPressed()) {
+            audio.unlockAudio();
+            audioUnlocked = true;
+        }
 
 
         if (gameState == GameState.INTRO) {

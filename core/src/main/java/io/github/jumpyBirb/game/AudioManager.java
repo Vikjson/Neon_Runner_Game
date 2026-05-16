@@ -106,4 +106,20 @@ public class AudioManager {
         music = true;
         playMenuMusic();
     }
+
+    public void unlockAudio() {
+
+        introMusic.play();
+        introMusic.stop();
+
+        menuMusic.play();
+        menuMusic.stop();
+
+        gameMusic.play();
+        gameMusic.stop();
+
+        jumpSound.play(0f);
+        crashSound.play(0f);
+    }
+
 }

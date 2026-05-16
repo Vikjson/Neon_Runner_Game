@@ -13,6 +13,8 @@ public class Menu {
     private GameState[] states;
     private GameState nextState = null;
     private final BitmapFont font;
+    private float renderX;
+    private float renderY;
 
     public Menu(String[] items, GameState[] states, BitmapFont font) {
         this.items = items;
@@ -50,31 +52,22 @@ public class Menu {
             float touchY =
                 Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            if (items.length == 4) {
+            float lineHeight =
+                font.getLineHeight() + 10;
 
-                if (touchY > 700) {
-                    menuIndex = 0;
+            for (int i = 0; i < items.length; i++) {
 
-                } else if (touchY > 550) {
-                    menuIndex = 1;
+                float itemY =
+                    renderY - i * lineHeight;
 
-                } else if (touchY > 400) {
-                    menuIndex = 2;
+                if (touchY > itemY - lineHeight
+                    && touchY < itemY + 10) {
 
-                } else {
-                    menuIndex = 3;
-                }
-
-            } else if (items.length == 2) {
-
-                if (touchY > 500) {
-                    menuIndex = 0;
-                } else {
-                    menuIndex = 1;
+                    menuIndex = i;
+                    select();
+                    break;
                 }
             }
-
-            select();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -91,11 +84,23 @@ public class Menu {
     }
 
     public void render(SpriteBatch batch, float startX, float startY) {
+
+        renderX = startX;
+        renderY = startY;
+
         float lineHeight = font.getLineHeight() + 10;
 
         for (int i = 0; i < items.length; i++) {
-            String text = (i == menuIndex) ? "> " + items[i] : items[i];
-            font.draw(batch, text, startX, startY - i * lineHeight);
+
+            String text =
+                (i == menuIndex)
+                    ? "> " + items[i]
+                    : items[i];
+
+            font.draw(batch,
+                text,
+                startX,
+                startY - i * lineHeight);
         }
     }
 }
