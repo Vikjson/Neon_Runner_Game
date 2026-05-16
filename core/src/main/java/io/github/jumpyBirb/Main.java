@@ -73,6 +73,7 @@ import java.util.List;
  * </ul>
  */
 public class Main extends ApplicationAdapter {
+    private boolean mobileKeyboardActivated = false;
     private MobileKeyboardBridge keyboardBridge;
     private static final float WORLD_WIDTH = 16f;
     private static final float WORLD_HEIGHT = 9f;
@@ -563,10 +564,19 @@ public class Main extends ApplicationAdapter {
 
         if (gameState == GameState.NAME_INPUT) {
 
+            if (isMobileWeb()
+                && keyboardBridge != null
+                && !mobileKeyboardActivated) {
+
+                keyboardBridge.enableKeyboard();
+                mobileKeyboardActivated = true;
+            }
+
             Gdx.input.setInputProcessor(nameStage);
 
             nameStage.act(Gdx.graphics.getDeltaTime());
             nameStage.draw();
+
             if (isMobileWeb() && keyboardBridge != null) {
 
                 String mobileText = keyboardBridge.getInputText();
@@ -575,7 +585,6 @@ public class Main extends ApplicationAdapter {
                     nameField.setText(mobileText);
                 }
             }
-            gameState = GameState.NAME_INPUT;
 
             // ⭐ 1. Ge fokus vid första tangent (MEN inte SPACE/ENTER/mouse)
             if (!nameField.hasKeyboardFocus() && Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
@@ -599,6 +608,12 @@ public class Main extends ApplicationAdapter {
                 }
 
                 playerName = input;
+
+                if (isMobileWeb() && keyboardBridge != null) {
+                    keyboardBridge.disableKeyboard();
+                }
+
+                mobileKeyboardActivated = false;
 
                 if (isMobileWeb() && keyboardBridge != null) {
                     keyboardBridge.disableKeyboard();
@@ -887,6 +902,9 @@ public class Main extends ApplicationAdapter {
         if (gameState != previousState) {
 
             if (gameState == GameState.NAME_INPUT) {
+                if (isMobileWeb() && keyboardBridge != null) {
+                    keyboardBridge.enableKeyboard();
+                }
                 Gdx.input.setCursorCatched(false);
 
             } else {
