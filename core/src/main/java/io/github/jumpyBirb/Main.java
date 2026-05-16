@@ -1,5 +1,6 @@
 package io.github.jumpyBirb;
 
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -23,6 +24,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.jumpyBirb.platform.MobileKeyboardBridge;
 
 import java.util.List;
 
@@ -71,6 +73,7 @@ import java.util.List;
  * </ul>
  */
 public class Main extends ApplicationAdapter {
+    private MobileKeyboardBridge keyboardBridge;
     private static final float WORLD_WIDTH = 16f;
     private static final float WORLD_HEIGHT = 9f;
     private OrthographicCamera camera;
@@ -170,6 +173,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
 
+
         batch = new SpriteBatch();
         assets = new GameAssets();
 
@@ -262,6 +266,13 @@ public class Main extends ApplicationAdapter {
         audio = new AudioManager(assets);
 
 
+    }
+
+    public Main() {
+    }
+
+    public Main(MobileKeyboardBridge keyboardBridge) {
+        this.keyboardBridge = keyboardBridge;
     }
 
     /**
@@ -554,6 +565,19 @@ public class Main extends ApplicationAdapter {
 
             nameStage.act(Gdx.graphics.getDeltaTime());
             nameStage.draw();
+            if (isMobileWeb() && keyboardBridge != null) {
+
+                if (Gdx.input.justTouched()) {
+                    nameStage.setKeyboardFocus(nameField);
+                    keyboardBridge.focusKeyboard();
+                }
+
+                String mobileText = keyboardBridge.getInputText();
+
+                if (!nameField.getText().equals(mobileText)) {
+                    nameField.setText(mobileText);
+                }
+            }
 
             // ⭐ 1. Ge fokus vid första tangent (MEN inte SPACE/ENTER/mouse)
             if (!nameField.hasKeyboardFocus() && Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
@@ -678,7 +702,7 @@ public class Main extends ApplicationAdapter {
             return;
         }
 
-        if (jumpPressed()) {
+        if (jumpPressed() || touchPressed()) {
             player.jump(calculateJumpForce());
             gameHasStarted = true;
             audio.playJump();
@@ -722,24 +746,36 @@ public class Main extends ApplicationAdapter {
      *
      * @return true if input was pressed this frame
      */
+
+
+
     private boolean jumpPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || Gdx.input.justTouched();
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+
     }
 
     private boolean menuConfirmPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || Gdx.input.justTouched();
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+
     }
 
     private boolean skipPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || Gdx.input.justTouched();
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+
+    }
+
+    private boolean isMobileWeb() {
+        return Gdx.app.getType() == Application.ApplicationType.WebGL
+            && Gdx.graphics.getWidth() < 1000;
+    }
+
+    private boolean touchPressed() {
+        return Gdx.input.justTouched();
     }
 
     /**
