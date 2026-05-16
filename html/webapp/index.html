@@ -53,9 +53,6 @@
         return document.getElementById("mobileInput").value;
     }
 
-    function preventDefaultTouch(evt) {
-                window.focus();
-    }
 
     function handleMouseDown(evt) {
         evt.preventDefault();
@@ -79,14 +76,10 @@
     gameDiv.addEventListener('mouseup',
         handleMouseUp, false);
 
-    gameDiv.addEventListener('touchstart',
-        preventDefaultTouch, false);
+    gameDiv.addEventListener('touchstart', () => {
+        focusMobileInput();
+    }, false);
 
-    gameDiv.addEventListener('touchmove',
-        preventDefaultTouch, false);
-
-    gameDiv.addEventListener('touchend',
-        preventDefaultTouch, false);
 
 
 </script>

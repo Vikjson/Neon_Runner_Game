@@ -567,10 +567,7 @@ public class Main extends ApplicationAdapter {
             nameStage.draw();
             if (isMobileWeb() && keyboardBridge != null) {
 
-                if (Gdx.input.justTouched()) {
-                    nameStage.setKeyboardFocus(nameField);
-                    keyboardBridge.focusKeyboard();
-                }
+                nameStage.setKeyboardFocus(nameField);
 
                 String mobileText = keyboardBridge.getInputText();
 
@@ -746,7 +743,6 @@ public class Main extends ApplicationAdapter {
      *
      * @return true if input was pressed this frame
      */
-
 
 
     private boolean jumpPressed() {
