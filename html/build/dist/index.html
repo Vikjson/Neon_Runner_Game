@@ -47,6 +47,8 @@
         src="html/html.nocache.js"></script>
 
 <script>
+    window.mobileKeyboardEnabled = false;
+
     function focusMobileInput() {
         const input = document.getElementById("mobileInput");
 
@@ -69,37 +71,18 @@
         input.blur();
     }
 
-
-    function handleMouseDown(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        window.focus();
-    }
-
-    function handleMouseUp(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-    }
-
-    document.addEventListener('contextmenu',
+    document.addEventListener("contextmenu",
         event => event.preventDefault());
 
-    const gameDiv = document.getElementById('embed-html');
+    const gameDiv = document.getElementById("embed-html");
 
-    gameDiv.addEventListener('mousedown',
-        handleMouseDown, false);
-
-    gameDiv.addEventListener('mouseup',
-        handleMouseUp, false);
-
-    gameDiv.addEventListener('touchstart', () => {
+    gameDiv.addEventListener("touchstart", () => {
 
         if (window.mobileKeyboardEnabled) {
             focusMobileInput();
         }
 
     }, false);
-
 
 </script>
 
