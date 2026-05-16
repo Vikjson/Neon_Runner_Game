@@ -458,6 +458,8 @@ public class Main extends ApplicationAdapter {
 
         inputGate.update(delta);
 
+
+
         if (gameState == GameState.INTRO) {
             intro.update(delta);
 
