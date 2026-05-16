@@ -1,30 +1,22 @@
 package io.github.jumpyBirb;
 
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
-
 import io.github.jumpyBirb.data.*;
 import io.github.jumpyBirb.data.intro.Intro;
 import io.github.jumpyBirb.game.*;
 import io.github.jumpyBirb.graphics.GameAssets;
 import io.github.jumpyBirb.graphics.GameRenderer;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.jumpyBirb.platform.MobileKeyboardBridge;
 
 import java.util.List;
 
@@ -73,8 +65,17 @@ import java.util.List;
  * </ul>
  */
 public class Main extends ApplicationAdapter {
-    private boolean mobileKeyboardActivated = false;
-    private MobileKeyboardBridge keyboardBridge;
+    private final String[] prefixes = {
+        "Neon", "Cyber", "Pixel", "Nova", "Void",
+        "Hyper", "Glitch", "Shadow", "Laser", "Turbo"
+    };
+
+    private final String[] suffixes = {
+        "Runner", "Fox", "Ghost", "Birb", "Cat",
+        "Dash", "Wave", "Spark", "Byte", "Flux"
+    };
+
+
     private static final float WORLD_WIDTH = 16f;
     private static final float WORLD_HEIGHT = 9f;
     private OrthographicCamera camera;
@@ -109,10 +110,6 @@ public class Main extends ApplicationAdapter {
     private GameAssets assets;
     private float startBlinkTimer = 0f;
 
-    private Stage nameStage;
-    private TextField nameField;
-    private Skin skin;
-
     private Player player;
     private Score score;
     private ObstacleManager obstacleManager;
@@ -124,7 +121,7 @@ public class Main extends ApplicationAdapter {
     private Menu confirmMenu;
     private Settings settings;
     private Credits credits;
-    private String playerName = "Player";
+    private String playerName;
     private boolean scoreSaved = false;
     private float dyingTimer = 0f;
     private static final float DYING_DURATION = 1.2f;
@@ -173,16 +170,11 @@ public class Main extends ApplicationAdapter {
      */
     @Override
     public void create() {
-        if (isMobileWeb()
-            && keyboardBridge != null
-            && !mobileKeyboardActivated) {
 
-            keyboardBridge.enableKeyboard();
-            mobileKeyboardActivated = true;
-        }
 
         batch = new SpriteBatch();
         assets = new GameAssets();
+        playerName = generateRandomName();
 
         uiFont = assets.uiFont;
         gameUiFont = assets.gameUiFont;
@@ -232,24 +224,6 @@ public class Main extends ApplicationAdapter {
         gameState = GameState.NAME_INPUT;
         inputGate.block(1f);
 
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json")); // måste finnas i assets-foldern
-        nameStage = new Stage(new FitViewport(UI_WIDTH, UI_HEIGHT));
-
-        nameField = new TextField("", skin);
-        nameField.setMessageText(playerName.trim());
-        nameField.setMaxLength(12);
-        nameField.setSize(300, 50);
-        nameField.setPosition(
-            UI_WIDTH / 2f - 150,
-            UI_HEIGHT / 2f);
-        nameField.setTextFieldFilter(new TextFieldFilter() {
-            @Override
-            public boolean acceptChar(TextField textField, char c) {
-                return Character.isLetterOrDigit(c) || c == '_';
-            }
-        });
-        nameStage.addActor(nameField);
-
         screenWidth = WORLD_WIDTH;
         screenHeight = WORLD_HEIGHT;
         ceiling = WORLD_HEIGHT;
@@ -276,10 +250,6 @@ public class Main extends ApplicationAdapter {
     }
 
     public Main() {
-    }
-
-    public Main(MobileKeyboardBridge keyboardBridge) {
-        this.keyboardBridge = keyboardBridge;
     }
 
     /**
@@ -393,20 +363,23 @@ public class Main extends ApplicationAdapter {
 
                 batch.end();
 
-                Gdx.input.setInputProcessor(nameStage);
-
-                nameStage.act(Gdx.graphics.getDeltaTime());
-                nameStage.draw();
 
                 batch.begin();
 
-                uiFont.draw(batch, "Enter your name:",
-                    UI_WIDTH / 2f - 150,
-                    UI_HEIGHT / 2f + 80);
+                uiFont.draw(batch,
+                    "Player: " + playerName,
+                    UI_WIDTH / 2f - 200,
+                    UI_HEIGHT / 2f + 40);
 
-                uiFont.draw(batch, "Press SPACE to continue",
-                    UI_WIDTH / 2f - 220,
-                    UI_HEIGHT / 2f - 80);
+                uiFont.draw(batch,
+                    "Left side = reroll",
+                    UI_WIDTH / 2f - 180,
+                    UI_HEIGHT / 2f - 40);
+
+                uiFont.draw(batch,
+                    "Right side = continue",
+                    UI_WIDTH / 2f - 180,
+                    UI_HEIGHT / 2f - 120);
 
                 batch.end();
                 break;
@@ -568,66 +541,32 @@ public class Main extends ApplicationAdapter {
 
         if (gameState == GameState.NAME_INPUT) {
 
-            if (isMobileWeb()
-                && keyboardBridge != null
-                && !mobileKeyboardActivated) {
+            if (touchPressed()) {
 
-                keyboardBridge.enableKeyboard();
-                mobileKeyboardActivated = true;
-            }
+                // vänster sida = reroll
+                if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2f) {
 
-            Gdx.input.setInputProcessor(nameStage);
+                    playerName = generateRandomName();
 
-            nameStage.act(Gdx.graphics.getDeltaTime());
-            nameStage.draw();
+                } else {
 
-            if (isMobileWeb() && keyboardBridge != null) {
-                keyboardBridge.disableKeyboard();
-            }
-
-            mobileKeyboardActivated = false;
-
-            // ⭐ 1. Ge fokus vid första tangent (MEN inte SPACE/ENTER/mouse)
-            if (!nameField.hasKeyboardFocus() && Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-
-                if (!Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-                    && !Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                    && !Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-
-                    nameStage.setKeyboardFocus(nameField);
+                    // höger sida = continue
+                    gameState = GameState.INTRO;
+                    inputGate.block(2f);
+                    audio.playIntroMusic();
                 }
             }
 
-            // ⭐ 2. Confirm
-            if (inputGate.canAcceptInput() && menuConfirmPressed()) {
+            if (menuConfirmPressed()) {
 
-                String input = nameField.getText().trim();
-
-                if (input.isEmpty()) {
-                    nameField.setMessageText("Player");
-                    return;
-                }
-
-                playerName = input;
-
-                if (isMobileWeb() && keyboardBridge != null) {
-                    keyboardBridge.disableKeyboard();
-                }
-
-                mobileKeyboardActivated = false;
-
-                if (isMobileWeb() && keyboardBridge != null) {
-                    keyboardBridge.disableKeyboard();
-                }
-
-                Gdx.input.setInputProcessor(null);
                 gameState = GameState.INTRO;
-
                 inputGate.block(2f);
                 audio.playIntroMusic();
             }
+
             return;
         }
+
 
         if (gameState == GameState.RUNNING && !gameHasStarted) {
             startBlinkTimer += delta;
@@ -739,7 +678,9 @@ public class Main extends ApplicationAdapter {
         timePlaying += delta;
 
         score.update(delta, true);
-        obstacleManager.update(delta, timePlaying, getObstacleSpeed());
+        obstacleManager.update(delta, timePlaying,
+
+            getObstacleSpeed());
 
         if (player.hitsBottom() || player.hitsTop(ceiling) ||
             obstacleManager.collidesWith(
@@ -787,10 +728,6 @@ public class Main extends ApplicationAdapter {
 
     }
 
-    private boolean isMobileWeb() {
-        return Gdx.app.getType() == Application.ApplicationType.WebGL
-            && Gdx.graphics.getWidth() < 1000;
-    }
 
     private boolean touchPressed() {
         return Gdx.input.justTouched();
@@ -896,16 +833,13 @@ public class Main extends ApplicationAdapter {
     public void resize(int width, int height) {
         viewport.update(width, height, true);
         uiViewport.update(width, height, true);
-        nameStage.getViewport().update(width, height, true);
+
     }
 
     private void handleCursor() {
         if (gameState != previousState) {
 
             if (gameState == GameState.NAME_INPUT) {
-                if (isMobileWeb() && keyboardBridge != null) {
-                    keyboardBridge.enableKeyboard();
-                }
                 Gdx.input.setCursorCatched(false);
 
             } else {
@@ -917,6 +851,17 @@ public class Main extends ApplicationAdapter {
 
             previousState = gameState;
         }
+    }
+
+    private String generateRandomName() {
+
+        String prefix =
+            prefixes[(int) (Math.random() * prefixes.length)];
+
+        String suffix =
+            suffixes[(int) (Math.random() * suffixes.length)];
+
+        return prefix + suffix;
     }
 
     /**
@@ -931,7 +876,5 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         assets.dispose();
-        skin.dispose();
-        nameStage.dispose();
     }
 }

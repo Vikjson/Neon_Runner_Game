@@ -25,7 +25,7 @@ public class GwtLauncher extends GwtApplication {
 
     @Override
     public ApplicationListener createApplicationListener() {
-        return new Main(new HtmlKeyboardBridge());
+        return new Main();
     }
 
     public static native void focusMobileKeyboard() /*-{
