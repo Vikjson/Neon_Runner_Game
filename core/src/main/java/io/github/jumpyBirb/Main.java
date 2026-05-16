@@ -724,19 +724,22 @@ public class Main extends ApplicationAdapter {
      */
     private boolean jumpPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+            || Gdx.input.justTouched();
     }
 
     private boolean menuConfirmPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+            || Gdx.input.justTouched();
     }
 
     private boolean skipPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+            || Gdx.input.justTouched();
     }
 
     /**
