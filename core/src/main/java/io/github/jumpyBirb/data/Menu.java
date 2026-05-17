@@ -1,9 +1,13 @@
 package io.github.jumpyBirb.data;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.jumpyBirb.game.GameState;
 
 public class Menu {
@@ -15,11 +19,14 @@ public class Menu {
     private final BitmapFont font;
     private float renderX;
     private float renderY;
+    private final Viewport viewport;
 
-    public Menu(String[] items, GameState[] states, BitmapFont font) {
+
+    public Menu(String[] items, GameState[] states, BitmapFont font,  Viewport viewport) {
         this.items = items;
         this.states = states;
         this.font = font;
+        this.viewport = viewport;
     }
 
     public void update() {
@@ -38,7 +45,9 @@ public class Menu {
             menuIndex = (menuIndex + 1) % items.length;
         }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+        if (Gdx.app.getType() != Application.ApplicationType.WebGL
+            && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+
             menuIndex = (menuIndex + 1) % items.length;
         }
 
@@ -49,19 +58,36 @@ public class Menu {
         // ⭐ MOBILE TOUCH
         if (Gdx.input.justTouched()) {
 
-            float touchY =
-                Gdx.graphics.getHeight() - Gdx.input.getY();
+            Vector3 touch =
+                new Vector3(Gdx.input.getX(),
+                    Gdx.input.getY(),
+                    0);
 
-            float lineHeight =
-                font.getLineHeight() + 10;
+            viewport.unproject(touch);
+
+            float touchX = touch.x;
+            float touchY = touch.y;
+
+            float lineHeight = font.getLineHeight() + 40;
 
             for (int i = 0; i < items.length; i++) {
 
-                float itemY =
-                    renderY - i * lineHeight;
+                float itemY = renderY - i * lineHeight;
 
-                if (touchY > itemY - lineHeight
-                    && touchY < itemY + 10) {
+                GlyphLayout layout =
+                    new GlyphLayout(font, items[i]);
+
+                float itemWidth = layout.width;
+
+                boolean insideX =
+                    touchX >= renderX &&
+                        touchX <= renderX + itemWidth;
+
+                boolean insideY =
+                    touchY >= itemY - lineHeight &&
+                        touchY <= itemY + 40;
+
+                if (insideX && insideY) {
 
                     menuIndex = i;
                     select();
@@ -70,11 +96,14 @@ public class Menu {
             }
         }
 
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             select();
         }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.app.getType() != Application.ApplicationType.WebGL
+            && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+
             select();
         }
     }
@@ -88,7 +117,7 @@ public class Menu {
         renderX = startX;
         renderY = startY;
 
-        float lineHeight = font.getLineHeight() + 10;
+        float lineHeight = font.getLineHeight() + 40;
 
         for (int i = 0; i < items.length; i++) {
 

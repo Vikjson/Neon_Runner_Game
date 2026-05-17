@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import io.github.jumpyBirb.data.*;
 import io.github.jumpyBirb.data.intro.Intro;
 import io.github.jumpyBirb.game.*;
@@ -128,6 +129,7 @@ public class Main extends ApplicationAdapter {
     private boolean sound = true;
     private boolean music = true;
     private boolean audioUnlocked = false;
+    private boolean audioStarted = false;
     private GameState previousState = null;
 
     private boolean gameHasStarted = false;
@@ -184,27 +186,27 @@ public class Main extends ApplicationAdapter {
         highScoreMenu = new Menu(
             new String[]{"menu"},
             new GameState[]{GameState.MENU},
-            assets.menuFont
+            assets.menuFont, uiViewport
         );
 
-        settings = new Settings(assets.menuFont);
+        settings = new Settings(assets.menuFont, uiViewport);
         menu = new Menu(
             new String[]{"start", "high score", "settings", "exit game"},
             new GameState[]{GameState.RUNNING, GameState.HIGH_SCORE, GameState.SETTINGS, GameState.EXIT},
-            assets.menuFont
+            assets.menuFont, uiViewport
         );
 
         confirmMenu = new Menu(
             new String[]{"yes", "no"},
             new GameState[]{GameState.RESET_SCORE, GameState.SETTINGS},
-            assets.menuFont
+            assets.menuFont, uiViewport
         );
 
 
         gameOverMenu = new Menu(
             new String[]{"play again", "settings", "exit game"},
             new GameState[]{GameState.RUNNING, GameState.SETTINGS, GameState.EXIT},
-            assets.menuFont
+            assets.menuFont, uiViewport
         );
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -262,6 +264,7 @@ public class Main extends ApplicationAdapter {
      */
     @Override
     public void render() {
+
         ScreenUtils.clear(Color.BLACK);
         update();
         handleCursor();
@@ -369,17 +372,17 @@ public class Main extends ApplicationAdapter {
 
                 uiFont.draw(batch,
                     "Player: " + playerName,
-                    UI_WIDTH / 2f - 200,
-                    UI_HEIGHT / 2f + 40);
+                    UI_WIDTH / 2f - 220,
+                    UI_HEIGHT / 2f + 120);
 
                 uiFont.draw(batch,
-                    "Left side = reroll",
-                    UI_WIDTH / 2f - 180,
-                    UI_HEIGHT / 2f - 40);
+                    "[ Randomize ]",
+                    UI_WIDTH / 2f - 220,
+                    UI_HEIGHT / 2f);
 
                 uiFont.draw(batch,
-                    "Right side = continue",
-                    UI_WIDTH / 2f - 180,
+                    "[ Start Game ]",
+                    UI_WIDTH / 2f - 220,
                     UI_HEIGHT / 2f - 120);
 
                 batch.end();
@@ -462,6 +465,8 @@ public class Main extends ApplicationAdapter {
         if (!audioUnlocked && touchPressed()) {
             audio.unlockAudio();
             audioUnlocked = true;
+
+            return;
         }
 
 
@@ -548,20 +553,9 @@ public class Main extends ApplicationAdapter {
 
         if (gameState == GameState.NAME_INPUT) {
 
-            if (touchPressed()) {
-
-                // vänster sida = reroll
-                if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2f) {
-
-                    playerName = generateRandomName();
-
-                } else {
-
-                    // höger sida = continue
-                    gameState = GameState.INTRO;
-                    inputGate.block(2f);
-                    audio.playIntroMusic();
-                }
+            // DESKTOP KEYBOARD
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                playerName = generateRandomName();
             }
 
             if (menuConfirmPressed()) {
@@ -569,6 +563,41 @@ public class Main extends ApplicationAdapter {
                 gameState = GameState.INTRO;
                 inputGate.block(2f);
                 audio.playIntroMusic();
+            }
+
+            // MOBILE TOUCH BUTTONS
+            if (touchPressed()) {
+
+                Vector3 touch =
+                    new Vector3(
+                        Gdx.input.getX(),
+                        Gdx.input.getY(),
+                        0);
+
+                uiViewport.unproject(touch);
+
+                float x = touch.x;
+                float y = touch.y;
+
+                // RANDOMIZE BUTTON
+                if (x >= UI_WIDTH / 2f - 220 &&
+                    x <= UI_WIDTH / 2f + 180 &&
+                    y >= UI_HEIGHT / 2f - 40 &&
+                    y <= UI_HEIGHT / 2f + 20) {
+
+                    playerName = generateRandomName();
+                }
+
+                // START BUTTON
+                if (x >= UI_WIDTH / 2f - 220 &&
+                    x <= UI_WIDTH / 2f + 220 &&
+                    y >= UI_HEIGHT / 2f - 160 &&
+                    y <= UI_HEIGHT / 2f - 100) {
+
+                    gameState = GameState.INTRO;
+                    inputGate.block(2f);
+                    audio.playIntroMusic();
+                }
             }
 
             return;
