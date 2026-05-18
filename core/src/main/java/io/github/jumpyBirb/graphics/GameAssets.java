@@ -85,23 +85,23 @@ public class GameAssets {
     public final List<Texture> topObstacles = new ArrayList<Texture>();
 
     public final Music introMusic = com.badlogic.gdx.Gdx.audio.newMusic(
-        com.badlogic.gdx.Gdx.files.internal("intro-music.mp3")
+        com.badlogic.gdx.Gdx.files.internal("intro-music.ogg")
     );
 
     public final Music menuMusic = com.badlogic.gdx.Gdx.audio.newMusic(
-        com.badlogic.gdx.Gdx.files.internal("menu-music.mp3")
+        com.badlogic.gdx.Gdx.files.internal("menu-music.ogg")
     );
 
     public final Music gameMusic = com.badlogic.gdx.Gdx.audio.newMusic(
-        com.badlogic.gdx.Gdx.files.internal("game-music.mp3")
+        com.badlogic.gdx.Gdx.files.internal("game-music.ogg")
     );
 
     public final Sound jumpSound = com.badlogic.gdx.Gdx.audio.newSound(
-        com.badlogic.gdx.Gdx.files.internal("jump.mp3")
+        com.badlogic.gdx.Gdx.files.internal("jump.ogg")
     );
 
     public final Sound crashSound = com.badlogic.gdx.Gdx.audio.newSound(
-        com.badlogic.gdx.Gdx.files.internal("crash.mp3")
+        com.badlogic.gdx.Gdx.files.internal("crash.ogg")
     );
 
     public GameAssets() {
@@ -125,8 +125,11 @@ public class GameAssets {
         creditsFont = new BitmapFont(Gdx.files.internal("ui/credits-intro-font.fnt"));
         introFont = new BitmapFont(Gdx.files.internal("ui/credits-intro-font.fnt"));
         uiFont = new BitmapFont(Gdx.files.internal("ui/ui-font.fnt"));
+        uiFont.getData().setScale(1.5f);
         gameUiFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
+        gameUiFont.getData().setScale(3f);
         highScoreFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
+        highScoreFont.getData().setScale(3f);
         menuFont = new BitmapFont(Gdx.files.internal("ui/menu-large.fnt"));
 
 

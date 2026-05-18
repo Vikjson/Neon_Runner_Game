@@ -404,6 +404,7 @@ public class Main extends ApplicationAdapter {
                     score,
                     gameState,
                     finalScore,
+                    playerName,
                     podX,
                     podY,
                     POD_WIDTH,
@@ -520,7 +521,7 @@ public class Main extends ApplicationAdapter {
 
                 batch.draw(assets.menuBackground, 0, 0, UI_WIDTH, UI_HEIGHT);
 
-                credits.render(batch, 100, UI_HEIGHT - 50);
+                credits.render(batch, 100, UI_WIDTH - 50);
 
                 batch.end();
                 break;

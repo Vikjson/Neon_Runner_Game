@@ -135,6 +135,7 @@ public class GameRenderer {
         Score score,
         GameState gameState,
         long finalScore,
+        String playerName,
         float podX,
         float podY,
         float podWidth,
@@ -232,8 +233,8 @@ public class GameRenderer {
         assets.gameUiFont.setColor(Color.WHITE);
 
         // Draw the current score near the top of the screen.
-        assets.gameUiFont.draw(batch, "Score: " + score.getVisualScore(),
-            250, Gdx.graphics.getHeight() - 20);
+               assets.gameUiFont.draw(batch, playerName + " score: " + score.getVisualScore(),
+            80, Gdx.graphics.getHeight() - 40);
 
 
         // If the game is over, draw a game over message and final score.
