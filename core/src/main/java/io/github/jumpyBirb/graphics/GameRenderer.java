@@ -234,7 +234,7 @@ public class GameRenderer {
 
         // Draw the current score near the top of the screen.
                assets.gameUiFont.draw(batch, playerName + " score: " + score.getVisualScore(),
-            80, Gdx.graphics.getHeight() - 40);
+            100, Gdx.graphics.getHeight() - 50);
 
 
         // If the game is over, draw a game over message and final score.

@@ -575,9 +575,10 @@ public class Main extends ApplicationAdapter {
 
             if (intro.isFinished()) {
                 menu.reset();
+                audio.playMenuMusic();
                 gameState = GameState.MENU;
                 inputGate.block(1f);
-                audio.playMenuMusic();
+
                 return;
             }
 
@@ -688,13 +689,15 @@ public class Main extends ApplicationAdapter {
 
                 } else {
 
+                    if (audioUnlocked) {
+                        audio.playIntroMusic();
+                    }
+
                     nameMenu.reset();
                     gameState = GameState.INTRO;
                     inputGate.block(2f);
 
-                    if (audioUnlocked) {
-                        audio.playIntroMusic();
-                    }
+
 
                     return;
                 }
