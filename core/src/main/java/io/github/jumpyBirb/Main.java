@@ -807,39 +807,53 @@ public class Main extends ApplicationAdapter {
             return;
         }
 
-        if (jumpPressed()) {
+        if (gameState == GameState.RUNNING) {
 
-            if (!gameHasStarted) {
-                audio.playGameMusic();
+            if (inputGate.canAcceptInput()
+                && jumpPressed()) {
+
+                if (!gameHasStarted) {
+                    audio.playGameMusic();
+                }
+
+                player.jump(calculateJumpForce());
+
+                gameHasStarted = true;
+
+                audio.playJump();
             }
 
-            player.jump(calculateJumpForce());
+            if (!gameHasStarted) {
+                return;
+            }
 
-            gameHasStarted = true;
+            background.update(delta);
 
-            audio.playJump();
-        }
+            player.update(delta, GRAVITY);
 
-        background.update(delta);
-        player.update(delta, GRAVITY);
-        player.clampToCeiling(ceiling);
+            player.clampToCeiling(ceiling);
 
-        podX -= POD_SPEED * delta;
-        timePlaying += delta;
+            podX -= POD_SPEED * delta;
 
-        score.update(delta, true);
-        obstacleManager.update(delta, timePlaying,
+            timePlaying += delta;
 
-            getObstacleSpeed());
+            score.update(delta, true);
 
-        if (player.hitsBottom() || player.hitsTop(ceiling) ||
-            obstacleManager.collidesWith(
+            obstacleManager.update(
+                delta,
+                timePlaying,
+                getObstacleSpeed());
+
+            if (player.hitsBottom()
+                || player.hitsTop(ceiling)
+                || obstacleManager.collidesWith(
                 player.getX(),
                 player.getY(),
                 player.getWidth(),
                 player.getHeight())) {
 
-            gameOver();
+                gameOver();
+            }
         }
 
     }
@@ -895,16 +909,10 @@ public class Main extends ApplicationAdapter {
 
         gameHasStarted = false;
 
-        gameOverMenu.reset();
-        menu.reset();
-        highScoreMenu.reset();
-        settings.reset();
-        confirmMenu.reset();
-
         gameState = GameState.RUNNING;
 
-      //  audio.playGameMusic();
-        inputGate.block(0.25f);
+        //  audio.playGameMusic();
+        inputGate.block(0.75f);
     }
 
     private long getFinalScore() {
@@ -992,7 +1000,7 @@ public class Main extends ApplicationAdapter {
             suffixes[(int) (Math.random() * suffixes.length)];
         Random random = new Random();
 
-        return prefix + suffix  + random.nextInt(999);
+        return prefix + suffix + random.nextInt(999);
     }
 
     /**
