@@ -121,10 +121,21 @@ public class AudioManager {
 
         jumpSound.play(0f);
 
+        introMusic.setVolume(0f);
+        introMusic.play();
+        introMusic.pause();
+
         menuMusic.setVolume(0f);
         menuMusic.play();
-        menuMusic.stop();
+        menuMusic.pause();
+
+        gameMusic.setVolume(0f);
+        gameMusic.play();
+        gameMusic.pause();
+
+        introMusic.setVolume(1f);
         menuMusic.setVolume(1f);
+        gameMusic.setVolume(1f);
     }
 
 }

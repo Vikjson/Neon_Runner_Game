@@ -549,7 +549,7 @@ public class Main extends ApplicationAdapter {
 
         inputGate.update(delta);
 
-        if (!audioUnlocked &&
+       /* if (!audioUnlocked &&
             (Gdx.input.justTouched()
                 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))) {
 
@@ -559,7 +559,7 @@ public class Main extends ApplicationAdapter {
             inputGate.block(1f);
 
             return;
-        }
+        } */
 
 
         if (gameState == GameState.INTRO) {
@@ -675,6 +675,11 @@ public class Main extends ApplicationAdapter {
             GameState next = nameMenu.consumeNextState();
 
             if (next != null) {
+
+                if (!audioUnlocked) {
+                    audio.unlockAudio();
+                    audioUnlocked = true;
+                }
 
                 if (next == GameState.NAME_INPUT) {
 

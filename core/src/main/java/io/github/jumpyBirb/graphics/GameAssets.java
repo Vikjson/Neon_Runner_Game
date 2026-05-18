@@ -123,13 +123,14 @@ public class GameAssets {
 
 
         creditsFont = new BitmapFont(Gdx.files.internal("ui/credits-intro-font.fnt"));
+        creditsFont.getData().setScale(1.20f);
         introFont = new BitmapFont(Gdx.files.internal("ui/credits-intro-font.fnt"));
         uiFont = new BitmapFont(Gdx.files.internal("ui/ui-font.fnt"));
         uiFont.getData().setScale(1.5f);
         gameUiFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
-        gameUiFont.getData().setScale(3f);
+        gameUiFont.getData().setScale(1.5f);
         highScoreFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
-        highScoreFont.getData().setScale(3f);
+        highScoreFont.getData().setScale(1.5f);
         menuFont = new BitmapFont(Gdx.files.internal("ui/menu-large.fnt"));
 
 
