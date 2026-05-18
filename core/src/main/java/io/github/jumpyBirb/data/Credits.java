@@ -45,9 +45,9 @@ public class Credits {
 
         scrollY += SCROLL_SPEED * delta;
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.justTouched()
+            || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+            || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
 
             nextState = GameState.SETTINGS;
         }

@@ -22,40 +22,43 @@ public class AudioManager {
     }
 
     public void playIntroMusic() {
-        if (!music) return;
 
-        if (introMusic.isPlaying()) return;
+        if (!music) return;
 
         menuMusic.stop();
         gameMusic.stop();
 
-        introMusic.setLooping(true);
-        introMusic.play();
+        if (!introMusic.isPlaying()) {
+            introMusic.setLooping(true);
+            introMusic.play();
+        }
     }
 
     public void playMenuMusic() {
-        if (!music) return;
 
-        if (menuMusic.isPlaying()) return;
+        if (!music) return;
 
         introMusic.stop();
         gameMusic.stop();
 
-        menuMusic.setLooping(true);
-        menuMusic.play();
+        if (!menuMusic.isPlaying()) {
+            menuMusic.setLooping(true);
+            menuMusic.play();
+        }
     }
 
 
     public void playGameMusic() {
-        if (!music) return;
 
-        if (gameMusic.isPlaying()) return;
+        if (!music) return;
 
         introMusic.stop();
         menuMusic.stop();
 
-        gameMusic.setLooping(true);
-        gameMusic.play();
+        if (!gameMusic.isPlaying()) {
+            gameMusic.setLooping(true);
+            gameMusic.play();
+        }
     }
 
     public void playJump() {
@@ -115,7 +118,13 @@ public class AudioManager {
     }
 
     public void unlockAudio() {
+
         jumpSound.play(0f);
+
+        menuMusic.setVolume(0f);
+        menuMusic.play();
+        menuMusic.stop();
+        menuMusic.setVolume(1f);
     }
 
 }

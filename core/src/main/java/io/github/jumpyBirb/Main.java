@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Main game entry point for JumpyBirb.
@@ -67,13 +68,89 @@ import java.util.List;
  */
 public class Main extends ApplicationAdapter {
     private final String[] prefixes = {
-        "Neon", "Cyber", "Pixel", "Nova", "Void",
-        "Hyper", "Glitch", "Shadow", "Laser", "Turbo"
+        "Neon",
+        "Cyber",
+        "Shadow",
+        "Nova",
+        "Glitch",
+        "Pixel",
+        "Chrome",
+        "Zero",
+        "Volt",
+        "Ghost",
+        "Night",
+        "Laser",
+        "Turbo",
+        "Echo",
+        "Static",
+        "Vapor",
+        "Hyper",
+        "Cryo",
+        "Storm",
+        "Quantum",
+        "Inferno",
+        "Venom",
+        "Phantom",
+        "Omega",
+        "Astro",
+        "Pulse",
+        "Circuit",
+        "Byte",
+        "Data",
+        "Nitro",
+        "Electro",
+        "Flux",
+        "Toxic",
+        "Blaze",
+        "Lunar",
+        "Solar",
+        "Void",
+        "Rogue",
+        "Holo",
+        "Drift"
     };
 
     private final String[] suffixes = {
-        "Runner", "Fox", "Ghost", "Birb", "Cat",
-        "Dash", "Wave", "Spark", "Byte", "Flux"
+        "Runner",
+        "Fox",
+        "Wolf",
+        "Falcon",
+        "Tiger",
+        "Ghost",
+        "Viper",
+        "Dragon",
+        "Blade",
+        "Dash",
+        "Rider",
+        "Hunter",
+        "Byte",
+        "Spark",
+        "Claw",
+        "Strike",
+        "Crash",
+        "Shadow",
+        "Hawk",
+        "Glider",
+        "Storm",
+        "Fang",
+        "Core",
+        "Jet",
+        "Nova",
+        "Surge",
+        "Pulse",
+        "Cipher",
+        "Crawler",
+        "Phantom",
+        "Knight",
+        "Reaper",
+        "Blitz",
+        "Wraith",
+        "Scythe",
+        "Racer",
+        "Skipper",
+        "Comet",
+        "Drifter",
+        "Walker"
     };
 
 
@@ -376,10 +453,19 @@ public class Main extends ApplicationAdapter {
 
                 batch.begin();
 
-                uiFont.draw(batch,
-                    "Player: " + playerName,
-                    UI_WIDTH / 2f - 200,
-                    UI_HEIGHT / 2f + 40);
+                String playerText =
+                    "Player: " + playerName;
+
+                GlyphLayout layout =
+                    new GlyphLayout(gameUiFont, playerText);
+
+                float x =
+                    UI_WIDTH / 2f - layout.width / 2f;
+
+                gameUiFont.draw(batch,
+                    playerText,
+                    x,
+                    UI_HEIGHT / 2f + 80);
 
                 nameMenu.render(batch,
                     UI_WIDTH / 2f - 180,
@@ -396,7 +482,7 @@ public class Main extends ApplicationAdapter {
                 batch.draw(assets.gameOverBackground, 0, 0, UI_WIDTH, UI_HEIGHT);
 
                 highScoreFont.draw(batch, "HIGH SCORE", 100, 450);
-                highScoreFont.draw(batch, "Your score: " + finalScore, 100, 600);
+                highScoreFont.draw(batch, playerName + " you scored: " + finalScore, 100, 600);
 
                 int y = 380;
                 for (Highscore.Entry e : top5) {
@@ -434,7 +520,7 @@ public class Main extends ApplicationAdapter {
 
                 batch.draw(assets.menuBackground, 0, 0, UI_WIDTH, UI_HEIGHT);
 
-                credits.render(batch, 100, UI_WIDTH - 50);
+                credits.render(batch, 100, UI_HEIGHT - 50);
 
                 batch.end();
                 break;
@@ -722,13 +808,16 @@ public class Main extends ApplicationAdapter {
         }
 
         if (jumpPressed()) {
-            player.jump(calculateJumpForce());
-            gameHasStarted = true;
-            audio.playJump();
-        }
 
-        if (!gameHasStarted) {
-            return;
+            if (!gameHasStarted) {
+                audio.playGameMusic();
+            }
+
+            player.jump(calculateJumpForce());
+
+            gameHasStarted = true;
+
+            audio.playJump();
         }
 
         background.update(delta);
@@ -814,7 +903,7 @@ public class Main extends ApplicationAdapter {
 
         gameState = GameState.RUNNING;
 
-        audio.playGameMusic();
+      //  audio.playGameMusic();
         inputGate.block(0.25f);
     }
 
@@ -901,8 +990,9 @@ public class Main extends ApplicationAdapter {
 
         String suffix =
             suffixes[(int) (Math.random() * suffixes.length)];
+        Random random = new Random();
 
-        return prefix + suffix;
+        return prefix + suffix  + random.nextInt(999);
     }
 
     /**
