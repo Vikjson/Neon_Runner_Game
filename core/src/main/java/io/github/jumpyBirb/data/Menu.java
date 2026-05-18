@@ -22,7 +22,7 @@ public class Menu {
     private final Viewport viewport;
 
 
-    public Menu(String[] items, GameState[] states, BitmapFont font,  Viewport viewport) {
+    public Menu(String[] items, GameState[] states, BitmapFont font, Viewport viewport) {
         this.items = items;
         this.states = states;
         this.font = font;
@@ -45,70 +45,69 @@ public class Menu {
             menuIndex = (menuIndex + 1) % items.length;
         }
 
-        if (Gdx.app.getType() != Application.ApplicationType.WebGL
-            && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-
-            menuIndex = (menuIndex + 1) % items.length;
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             menuIndex = (menuIndex - 1 + items.length) % items.length;
         }
 
-        // ⭐ MOBILE TOUCH
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+            || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+
+            select();
+            return;
+        }
+
         if (Gdx.input.justTouched()) {
 
-            Vector3 touch =
-                new Vector3(Gdx.input.getX(),
-                    Gdx.input.getY(),
-                    0);
+            Vector3 touch = new Vector3(
+                Gdx.input.getX(),
+                Gdx.input.getY(),
+                0
+            );
 
             viewport.unproject(touch);
-
-            float touchX = touch.x;
-            float touchY = touch.y;
 
             float lineHeight = font.getLineHeight() + 40;
 
             for (int i = 0; i < items.length; i++) {
 
-                float itemY = renderY - i * lineHeight;
+                float itemY =
+                    renderY - i * lineHeight;
+
+                String renderedText =
+                    (i == menuIndex)
+                        ? "> " + items[i]
+                        : items[i];
 
                 GlyphLayout layout =
-                    new GlyphLayout(font, items[i]);
-
-                float itemWidth = layout.width;
+                    new GlyphLayout(font, renderedText);
 
                 boolean insideX =
-                    touchX >= renderX &&
-                        touchX <= renderX + itemWidth;
+                    touch.x >= renderX &&
+                        touch.x <= renderX + layout.width;
 
                 boolean insideY =
-                    touchY >= itemY - lineHeight &&
-                        touchY <= itemY + 40;
+                    touch.y <= itemY &&
+                        touch.y >= itemY - lineHeight;
 
                 if (insideX && insideY) {
 
                     menuIndex = i;
                     select();
-                    break;
+                    return;
                 }
             }
         }
-
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            select();
-        }
-
-        if (Gdx.app.getType() != Application.ApplicationType.WebGL
-            && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-
-            select();
-        }
     }
 
+
+
     private void select() {
+
+        if (menuIndex < 0
+            || menuIndex >= states.length) {
+            return;
+        }
+
         nextState = states[menuIndex];
     }
 
@@ -131,5 +130,10 @@ public class Menu {
                 startX,
                 startY - i * lineHeight);
         }
+    }
+
+    public void reset() {
+        menuIndex = 0;
+        nextState = null;
     }
 }

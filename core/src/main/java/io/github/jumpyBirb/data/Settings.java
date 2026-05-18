@@ -1,43 +1,36 @@
 package io.github.jumpyBirb.data;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.jumpyBirb.game.GameState;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.math.Vector3;
-
 
 public class Settings {
 
     private int settingsIndex = 0;
+
     private final BitmapFont font;
-    private boolean inResolutionMenu = false;
-    private int resolutionIndex = 0;
-    private boolean resolutionChanged = false;
-    private float renderX;
-    private float renderY;
     private final Viewport viewport;
 
-     public boolean consumeResolutionChanged() {
-        boolean temp = resolutionChanged;
-        resolutionChanged = false;
-        return temp;
-    }
+    private float renderX;
+    private float renderY;
+    private boolean music = true;
+    private boolean sound = true;
 
-    private final String[] resolutions = {
-        "1280 x 720",
-        "1920 x 1080",
-        "FULLSCREEN"
-    };
-
-
-    private final String[] items = {"Reset High-Score", "Music ON/OFF", "Sound ON/OFF", "FULLSCREEN ON/OFF", "CREDITS", "Change name", "MENU"};
     private GameState nextState = null;
 
+    private final String[] items = {
+        "Reset High-Score",
+        "Music ON/OFF",
+        "Sound ON/OFF",
+        "Credits",
+        "Change Name",
+        "Menu"
+    };
 
     public Settings(BitmapFont font, Viewport viewport) {
         this.font = font;
@@ -56,7 +49,7 @@ public class Settings {
 
     private void handleInput() {
 
-        // DESKTOP KEYBOARD
+        // KEYBOARD NAVIGATION
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             settingsIndex =
@@ -69,23 +62,16 @@ public class Settings {
                     % items.length;
         }
 
+        // KEYBOARD SELECT
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
 
             select();
+            return;
         }
 
-        // DESKTOP MOUSE
-
-        if (Gdx.app.getType()
-            != Application.ApplicationType.WebGL
-            && Gdx.input.isButtonJustPressed(
-            Input.Buttons.LEFT)) {
-
-            select();
-        }
-
-        // MOBILE / WEB TOUCH
+        // TOUCH / MOBILE / HTML
 
         if (Gdx.input.justTouched()) {
 
@@ -97,17 +83,13 @@ public class Settings {
 
             viewport.unproject(touch);
 
-            float touchX = touch.x;
-            float touchY = touch.y;
-
             float lineHeight =
                 font.getLineHeight() + 40;
 
             String[] displayItems = {
                 "Reset High-Score",
-                "Music: ON/OFF",
-                "Sound: ON/OFF",
-                "Fullscreen ON/OFF",
+                "Music: " + (music ? "ON" : "OFF"),
+                "Sound: " + (sound ? "ON" : "OFF"),
                 "Credits",
                 "Change Name",
                 "Menu"
@@ -120,27 +102,29 @@ public class Settings {
                 float itemY =
                     renderY - i * lineHeight;
 
+                String renderedText =
+                    (i == settingsIndex)
+                        ? "> " + displayItems[i]
+                        : displayItems[i];
+
                 GlyphLayout layout =
                     new GlyphLayout(
                         font,
-                        displayItems[i]);
-
-                float itemWidth =
-                    layout.width;
+                        renderedText);
 
                 boolean insideX =
-                    touchX >= renderX &&
-                        touchX <= renderX + itemWidth;
+                    touch.x >= renderX &&
+                        touch.x <= renderX + layout.width;
 
                 boolean insideY =
-                    touchY >= itemY - lineHeight &&
-                        touchY <= itemY + 40;
+                    touch.y <= itemY &&
+                        touch.y >= itemY - lineHeight;
 
                 if (insideX && insideY) {
 
                     settingsIndex = i;
                     select();
-                    break;
+                    return;
                 }
             }
         }
@@ -148,69 +132,82 @@ public class Settings {
 
     private void select() {
 
-        switch (settingsIndex) {
+        GameState state =
+            getStateForIndex(settingsIndex);
 
-            case 0:
-                nextState = GameState.CONFIRM_RESET;
-                break;
-
-            case 1:
-                nextState = GameState.MUSIC;
-                break;
-
-            case 2:
-                nextState = GameState.SOUND;
-                break;
-
-            case 3:
-                toggleFullscreen();
-                break;
-
-            case 4:
-                nextState = GameState.CREDITS;
-                break;
-
-            case 5:
-                nextState = GameState.NAME_INPUT;
-                break;
-
-            case 6:
-                nextState = GameState.MENU;
-                break;
-
-            default:
-                nextState = null;
-                break;
+        if (state != null) {
+            nextState = state;
         }
     }
 
-    public void render(SpriteBatch batch, float startX, float startY, boolean music, boolean sound) {
+    private GameState getStateForIndex(int index) {
+
+        switch (index) {
+
+            case 0:
+                return GameState.CONFIRM_RESET;
+
+            case 1:
+                return GameState.MUSIC;
+
+            case 2:
+                return GameState.SOUND;
+
+            case 3:
+                return GameState.CREDITS;
+
+            case 4:
+                return GameState.NAME_INPUT;
+
+            case 5:
+                return GameState.MENU;
+
+            default:
+                return null;
+        }
+    }
+
+    public void render(SpriteBatch batch,
+                       float startX,
+                       float startY,
+                       boolean music,
+                       boolean sound) {
+        this.music = music;
+        this.sound = sound;
 
         renderX = startX;
         renderY = startY;
-        float lineHeight = font.getLineHeight() + 40;
+
+        float lineHeight =
+            font.getLineHeight() + 40;
 
         String[] displayItems = {
             "Reset High-Score",
             "Music: " + (music ? "ON" : "OFF"),
             "Sound: " + (sound ? "ON" : "OFF"),
-            "Fullscreen ON/OFF ",
             "Credits",
             "Change Name",
             "Menu"
         };
 
-        for (int i = 0; i < displayItems.length; i++) {
-            String text = (i == settingsIndex) ? "> " + displayItems[i] : displayItems[i];
-            font.draw(batch, text, startX, startY - i * lineHeight);
+        for (int i = 0;
+             i < displayItems.length;
+             i++) {
+
+            String text =
+                (i == settingsIndex)
+                    ? "> " + displayItems[i]
+                    : displayItems[i];
+
+            font.draw(batch,
+                text,
+                startX,
+                startY - i * lineHeight);
         }
     }
 
-    private void toggleFullscreen() {
-        if (Gdx.graphics.isFullscreen()) {
-            Gdx.graphics.setWindowedMode(1280, 720);
-        } else {
-            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-        }
+    public void reset() {
+        settingsIndex = 0;
+        nextState = null;
     }
 }

@@ -120,6 +120,7 @@ public class Main extends ApplicationAdapter {
     private Menu gameOverMenu;
     private Menu highScoreMenu;
     private Menu confirmMenu;
+    private Menu nameMenu;
     private Settings settings;
     private Credits credits;
     private String playerName;
@@ -129,9 +130,6 @@ public class Main extends ApplicationAdapter {
     private boolean sound = true;
     private boolean music = true;
     private boolean audioUnlocked = false;
-    private boolean audioStarted = false;
-    private GameState previousState = null;
-
     private boolean gameHasStarted = false;
 
     private InputGate inputGate = new InputGate();
@@ -183,31 +181,6 @@ public class Main extends ApplicationAdapter {
         gameUiFont = assets.gameUiFont;
         highScoreFont = assets.highScoreFont;
 
-        highScoreMenu = new Menu(
-            new String[]{"menu"},
-            new GameState[]{GameState.MENU},
-            assets.menuFont, uiViewport
-        );
-
-        settings = new Settings(assets.menuFont, uiViewport);
-        menu = new Menu(
-            new String[]{"start", "high score", "settings", "exit game"},
-            new GameState[]{GameState.RUNNING, GameState.HIGH_SCORE, GameState.SETTINGS, GameState.EXIT},
-            assets.menuFont, uiViewport
-        );
-
-        confirmMenu = new Menu(
-            new String[]{"yes", "no"},
-            new GameState[]{GameState.RESET_SCORE, GameState.SETTINGS},
-            assets.menuFont, uiViewport
-        );
-
-
-        gameOverMenu = new Menu(
-            new String[]{"play again", "settings", "exit game"},
-            new GameState[]{GameState.RUNNING, GameState.SETTINGS, GameState.EXIT},
-            assets.menuFont, uiViewport
-        );
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         viewport.apply();
@@ -221,6 +194,39 @@ public class Main extends ApplicationAdapter {
 
         uiCamera.position.set(UI_WIDTH / 2f, UI_HEIGHT / 2f, 0);
         uiCamera.update();
+
+        nameMenu = new Menu(
+            new String[]{"Regenerate Name", "Continue"},
+            new GameState[]{GameState.NAME_INPUT, GameState.INTRO},
+            assets.menuFont,
+            uiViewport
+        );
+
+        highScoreMenu = new Menu(
+            new String[]{"menu"},
+            new GameState[]{GameState.MENU},
+            assets.menuFont, uiViewport
+        );
+
+        settings = new Settings(assets.menuFont, uiViewport);
+        menu = new Menu(
+            new String[]{"start", "high score", "settings"},
+            new GameState[]{GameState.RUNNING, GameState.HIGH_SCORE, GameState.SETTINGS},
+            assets.menuFont, uiViewport
+        );
+
+        confirmMenu = new Menu(
+            new String[]{"yes", "no"},
+            new GameState[]{GameState.RESET_SCORE, GameState.SETTINGS},
+            assets.menuFont, uiViewport
+        );
+
+
+        gameOverMenu = new Menu(
+            new String[]{"play again", "settings"},
+            new GameState[]{GameState.RUNNING, GameState.SETTINGS},
+            assets.menuFont, uiViewport
+        );
 
         credits = new Credits(assets.creditsFont, assets.menuFont);
         intro = new Intro(assets.logoText, assets.introFont);
@@ -272,6 +278,7 @@ public class Main extends ApplicationAdapter {
 
         uiViewport.apply();
         batch.setProjectionMatrix(uiCamera.combined);
+
 
         switch (gameState) {
 
@@ -367,23 +374,16 @@ public class Main extends ApplicationAdapter {
 
                 batch.end();
 
-
                 batch.begin();
 
                 uiFont.draw(batch,
                     "Player: " + playerName,
-                    UI_WIDTH / 2f - 220,
-                    UI_HEIGHT / 2f + 120);
+                    UI_WIDTH / 2f - 200,
+                    UI_HEIGHT / 2f + 40);
 
-                uiFont.draw(batch,
-                    "[ Randomize ]",
-                    UI_WIDTH / 2f - 220,
-                    UI_HEIGHT / 2f);
-
-                uiFont.draw(batch,
-                    "[ Start Game ]",
-                    UI_WIDTH / 2f - 220,
-                    UI_HEIGHT / 2f - 120);
+                nameMenu.render(batch,
+                    UI_WIDTH / 2f - 180,
+                    UI_HEIGHT / 2f - 180);
 
                 batch.end();
                 break;
@@ -462,9 +462,14 @@ public class Main extends ApplicationAdapter {
 
         inputGate.update(delta);
 
-        if (!audioUnlocked && touchPressed()) {
+        if (!audioUnlocked &&
+            (Gdx.input.justTouched()
+                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))) {
+
             audio.unlockAudio();
             audioUnlocked = true;
+
+            inputGate.block(1f);
 
             return;
         }
@@ -473,53 +478,71 @@ public class Main extends ApplicationAdapter {
         if (gameState == GameState.INTRO) {
             intro.update(delta);
 
-            if (inputGate.canAcceptInput() && skipPressed()) {
+            if (inputGate.canAcceptInput()
+                && (Gdx.input.justTouched()
+                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+                || Gdx.input.isKeyJustPressed(Input.Keys.ENTER))) {
+
                 intro.skip();
             }
 
             if (intro.isFinished()) {
+                menu.reset();
                 gameState = GameState.MENU;
                 inputGate.block(1f);
                 audio.playMenuMusic();
+                return;
             }
 
             return;
 
         }
-
+//Exit option removed from menus, so this doesn't have a way to trigger
         if (gameState == GameState.EXIT) {
             Gdx.app.exit();
             return;
         }
 
         if (gameState == GameState.MENU) {
+
             if (inputGate.canAcceptInput()) {
                 menu.update();
             }
 
             GameState next = menu.consumeNextState();
+
             if (next != null) {
+
                 if (next == GameState.RUNNING) {
+                    menu.reset();
                     startGame();
-                } else {
-                    gameState = next;
-                    inputGate.block(1f);
+                    return;
                 }
+                menu.reset();
+
+                gameState = next;
+                inputGate.block(1f);
+
+                return;
             }
+
             return;
         }
 
         if (gameState == GameState.SETTINGS) {
+
             if (inputGate.canAcceptInput()) {
                 settings.update();
             }
 
-
             GameState next = settings.consumeNextState();
+
             if (next != null) {
+
                 inputGate.block(0.25f);
 
                 if (next == GameState.MUSIC) {
+
                     if (music) {
                         audio.muteMusic();
                         music = false;
@@ -527,10 +550,12 @@ public class Main extends ApplicationAdapter {
                         audio.unMuteMusic();
                         music = true;
                     }
+
                     return;
                 }
 
                 if (next == GameState.SOUND) {
+
                     if (sound) {
                         audio.muteSound();
                         sound = false;
@@ -538,65 +563,48 @@ public class Main extends ApplicationAdapter {
                         audio.unMuteSound();
                         sound = true;
                     }
+
                     return;
                 }
 
                 if (next == GameState.CREDITS) {
                     credits.reset();
                 }
-
+                settings.reset();
                 gameState = next;
+                return;
             }
 
             return;
         }
 
+
         if (gameState == GameState.NAME_INPUT) {
 
-            // DESKTOP KEYBOARD
-            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-                playerName = generateRandomName();
+            if (inputGate.canAcceptInput()) {
+                nameMenu.update();
             }
 
-            if (menuConfirmPressed()) {
+            GameState next = nameMenu.consumeNextState();
 
-                gameState = GameState.INTRO;
-                inputGate.block(2f);
-                audio.playIntroMusic();
-            }
+            if (next != null) {
 
-            // MOBILE TOUCH BUTTONS
-            if (touchPressed()) {
-
-                Vector3 touch =
-                    new Vector3(
-                        Gdx.input.getX(),
-                        Gdx.input.getY(),
-                        0);
-
-                uiViewport.unproject(touch);
-
-                float x = touch.x;
-                float y = touch.y;
-
-                // RANDOMIZE BUTTON
-                if (x >= UI_WIDTH / 2f - 220 &&
-                    x <= UI_WIDTH / 2f + 180 &&
-                    y >= UI_HEIGHT / 2f - 40 &&
-                    y <= UI_HEIGHT / 2f + 20) {
+                if (next == GameState.NAME_INPUT) {
 
                     playerName = generateRandomName();
-                }
+                    return;
 
-                // START BUTTON
-                if (x >= UI_WIDTH / 2f - 220 &&
-                    x <= UI_WIDTH / 2f + 220 &&
-                    y >= UI_HEIGHT / 2f - 160 &&
-                    y <= UI_HEIGHT / 2f - 100) {
+                } else {
 
+                    nameMenu.reset();
                     gameState = GameState.INTRO;
                     inputGate.block(2f);
-                    audio.playIntroMusic();
+
+                    if (audioUnlocked) {
+                        audio.playIntroMusic();
+                    }
+
+                    return;
                 }
             }
 
@@ -615,9 +623,12 @@ public class Main extends ApplicationAdapter {
             }
 
             GameState next = highScoreMenu.consumeNextState();
+
             if (next != null) {
+                highScoreMenu.reset();
                 gameState = next;
                 inputGate.block(1f);
+                return;
             }
 
             return;
@@ -632,7 +643,7 @@ public class Main extends ApplicationAdapter {
                     Highscore.save(playerName, (int) finalScore);
                     scoreSaved = true;
                 }
-
+                gameOverMenu.reset();
                 gameState = GameState.GAME_OVER;
                 inputGate.block(1f);
                 audio.playMenuMusic();
@@ -651,12 +662,16 @@ public class Main extends ApplicationAdapter {
             GameState next = confirmMenu.consumeNextState();
 
             if (next != null) {
+
                 if (next == GameState.RESET_SCORE) {
                     Highscore.cleanHighScore();
                 }
 
+                confirmMenu.reset();
                 gameState = GameState.SETTINGS;
                 inputGate.block(0.25f);
+
+                return;
             }
 
             return;
@@ -669,34 +684,44 @@ public class Main extends ApplicationAdapter {
             }
 
             GameState next = gameOverMenu.consumeNextState();
+
             if (next != null) {
+
                 inputGate.block(0.25f);
 
                 if (next == GameState.RUNNING) {
+                    gameOverMenu.reset();
                     startGame();
-                } else {
-                    gameState = next;
+                    return;
                 }
+
+                gameOverMenu.reset();
+                gameState = next;
+                return;
             }
 
             return;
         }
 
         if (gameState == GameState.CREDITS) {
+
             if (inputGate.canAcceptInput()) {
                 credits.update();
             }
 
             GameState next = credits.consumeNextState();
+
             if (next != null) {
+                credits.reset();
                 gameState = next;
                 inputGate.block(0.5f);
+                return;
             }
 
             return;
         }
 
-        if (jumpPressed() || touchPressed()) {
+        if (jumpPressed()) {
             player.jump(calculateJumpForce());
             gameHasStarted = true;
             audio.playJump();
@@ -746,29 +771,9 @@ public class Main extends ApplicationAdapter {
 
     private boolean jumpPressed() {
         return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || touchPressed();
-
+            || Gdx.input.justTouched();
     }
 
-    private boolean menuConfirmPressed() {
-        return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || touchPressed();
-    }
-
-    private boolean skipPressed() {
-        return Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || touchPressed();
-    }
-
-
-    private boolean touchPressed() {
-        return Gdx.input.justTouched();
-    }
 
     /**
      * Starts a new run.
@@ -801,9 +806,16 @@ public class Main extends ApplicationAdapter {
 
         gameHasStarted = false;
 
+        gameOverMenu.reset();
+        menu.reset();
+        highScoreMenu.reset();
+        settings.reset();
+        confirmMenu.reset();
+
         gameState = GameState.RUNNING;
 
         audio.playGameMusic();
+        inputGate.block(0.25f);
     }
 
     private long getFinalScore() {
@@ -874,19 +886,11 @@ public class Main extends ApplicationAdapter {
     }
 
     private void handleCursor() {
-        if (gameState != previousState) {
 
-            if (gameState == GameState.NAME_INPUT) {
-                Gdx.input.setCursorCatched(false);
+        if (Gdx.app.getType()
+            != Application.ApplicationType.WebGL) {
 
-            } else {
-
-                if (Gdx.app.getType() != Application.ApplicationType.WebGL) {
-                    Gdx.input.setCursorCatched(true);
-                }
-            }
-
-            previousState = gameState;
+            Gdx.input.setCursorCatched(false);
         }
     }
 

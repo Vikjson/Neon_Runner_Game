@@ -1,101 +1,35 @@
 <!doctype html>
 <html>
-<head>
-    <title>Neon Runner</title>
+<title>Neon Runner</title>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <meta name="theme-color" content="#ff00ff">
+<meta name="theme-color" content="#ff00ff">
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="description"
-          content="Neon Runner - Retro endless runner game">
+<meta name="description"
+      content="Neon Runner - Retro endless runner game">
 
-    <link href="styles.css"
-          rel="stylesheet"
-          type="text/css">
+<link href="styles.css"
+      rel="stylesheet"
+      type="text/css">
 </head>
 
 <body>
 
 <div align="center" id="embed-html"></div>
-<input
-        id="mobileInput"
-        type="text"
-        inputmode="text"
-        maxlength="12"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false"
-        style="
-        position:fixed;
-        left:50%;
-        top:50%;
-        transform:translate(-50%, -50%);
-        width:220px;
-        height:50px;
-        font-size:24px;
-        opacity:0;
-        pointer-events:none;
-        z-index:1000;
-    ">
 
 <script type="text/javascript"
         src="html/html.nocache.js"></script>
 
 <script>
-    window.mobileKeyboardEnabled = false;
-
-    function focusMobileInput() {
-        const input = document.getElementById("mobileInput");
-
-        input.focus();
-        input.click();
-    }
-
-    function getMobileInputText() {
-        return document.getElementById("mobileInput").value;
-    }
-
-    function enableMobileKeyboard() {
-
-        const input = document.getElementById("mobileInput");
-
-        input.style.pointerEvents = "auto";
-        input.style.opacity = "0.01";
-
-        input.focus();
-    }
-
-    function disableMobileKeyboard() {
-
-        const input = document.getElementById("mobileInput");
-
-        input.blur();
-
-        input.style.pointerEvents = "none";
-        input.style.opacity = "0";
-    }
-
     document.addEventListener("contextmenu",
         event => event.preventDefault());
-
-    const gameDiv = document.getElementById("embed-html");
-
-    gameDiv.addEventListener("touchstart", () => {
-
-        if (window.mobileKeyboardEnabled) {
-            focusMobileInput();
-        }
-
-    }, false);
-
 </script>
 
 </body>
