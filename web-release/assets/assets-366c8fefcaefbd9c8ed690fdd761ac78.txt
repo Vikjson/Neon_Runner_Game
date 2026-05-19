@@ -28,6 +28,7 @@ motorbike5.png
 motorbikeCrash.png
 neonRunnerTextTwoRows.png
 neon_rider_logo_hd2.png
+oldlibgdx.png
 player.png
 podPlatform.png
 retrowave_skyscrapers_bottom-01.png

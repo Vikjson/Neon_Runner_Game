@@ -130,7 +130,7 @@ public class GameAssets {
         gameUiFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
         gameUiFont.getData().setScale(1.5f);
         highScoreFont = new BitmapFont(Gdx.files.internal("ui/highscore-font.fnt"));
-        highScoreFont.getData().setScale(1.5f);
+        highScoreFont.getData().setScale(1.25f);
         menuFont = new BitmapFont(Gdx.files.internal("ui/menu-large.fnt"));
 
 

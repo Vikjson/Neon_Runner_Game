@@ -4,6 +4,10 @@ package io.github.jumpyBirb.gwt;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
+import com.badlogic.gdx.backends.gwt.preloader.Preloader;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.Panel;
 import io.github.jumpyBirb.Main;
 import io.github.jumpyBirb.platform.MobileKeyboardBridge;
 
@@ -26,6 +30,21 @@ public class GwtLauncher extends GwtApplication {
     @Override
     public ApplicationListener createApplicationListener() {
         return new Main();
+    }
+
+    @Override
+    public Preloader.PreloaderCallback getPreloaderCallback() {
+        return createPreloaderPanel(
+            GWT.getHostPageBaseURL() + "preloadlogo.png");
+    }
+
+    @Override
+    protected void adjustMeterPanel(Panel meterPanel, Style meterStyle) {
+        meterPanel.setStyleName("gdx-meter");
+        meterPanel.addStyleName("nostripes");
+
+        meterStyle.setProperty("backgroundColor", "#ff00ff");
+        meterStyle.setProperty("backgroundImage", "none");
     }
 
     public static native void focusMobileKeyboard() /*-{

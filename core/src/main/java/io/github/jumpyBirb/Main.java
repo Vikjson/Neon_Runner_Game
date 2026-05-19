@@ -69,6 +69,7 @@ import java.util.Random;
 public class Main extends ApplicationAdapter {
     private final String[] prefixes = {
         "Neon",
+        "Crypto",
         "Cyber",
         "Shadow",
         "Nova",
@@ -107,15 +108,74 @@ public class Main extends ApplicationAdapter {
         "Void",
         "Rogue",
         "Holo",
-        "Drift"
+        "Drift",
+        "Star",
+        "Crazy",
+        "Lazy",
+        "Foxy",
+        "Blade",
+        "Java",
+        "Magic",
+        "Electro",
+        "Royal",
+        "Stealthy",
+        "Fluffy",
+        "Glitter",
+        "Alpha",
+        "Omega",
+        "Beta",
+        "Delivery",
+        "Bike",
+        "Soaring",
+        "Code",
+        "Justice",
+        "Handsome",
+        "Pretty",
+        "Glitter",
+        "Data",
+        "Retro",
+        "Future",
+        "Space",
+        "Thunder",
+        "Cutie",
+        "Flappy",
+        "Sparkly",
+        "Blue",
+        "Green",
+        "Pink",
+        "Red",
+        "Silver",
+        "Gold",
+        "Corporate",
+        "Baby",
+        "Tiny",
+        "Mega",
+        "Robot",
+        "AI",
+        "Auto"
+
     };
 
     private final String[] suffixes = {
         "Runner",
+        "Rider",
+        "Sheriff",
+        "Cat",
+        "Kitty",
+        "Kitten",
+        "Paws",
         "Fox",
         "Wolf",
+        "Swan",
+        "Bird",
+        "Eagle",
+        "Gecko",
         "Falcon",
         "Tiger",
+        "Monkey",
+        "Panther",
+        "Phoenix",
+        "Wizard",
         "Ghost",
         "Viper",
         "Dragon",
@@ -126,7 +186,7 @@ public class Main extends ApplicationAdapter {
         "Byte",
         "Spark",
         "Claw",
-        "Strike",
+        "Striker",
         "Crash",
         "Shadow",
         "Hawk",
@@ -150,7 +210,41 @@ public class Main extends ApplicationAdapter {
         "Skipper",
         "Comet",
         "Drifter",
-        "Walker"
+        "Walker",
+        "Vampire",
+        "Ghost",
+        "Crusher",
+        "Slayer",
+        "Hacker",
+        "Beast",
+        "Lord",
+        "Lady",
+        "Boss",
+        "Princess",
+        "Prince",
+        "King",
+        "Queen",
+        "Biker",
+        "Ninja",
+        "InTheShell",
+        "Punk",
+        "Chan",
+        "Girl",
+        "Boy",
+        "Man",
+        "Woman",
+        "Chip",
+        "Goth",
+        "Machine",
+        "Robot",
+        "Assassin",
+        "Droid",
+        "Cutie",
+        "Digger",
+        "Slave",
+        "Baby",
+        "Vengeance",
+
     };
 
 
@@ -273,7 +367,7 @@ public class Main extends ApplicationAdapter {
         uiCamera.update();
 
         nameMenu = new Menu(
-            new String[]{"Regenerate Name", "Continue"},
+            new String[]{"Generate new name", "Continue"},
             new GameState[]{GameState.NAME_INPUT, GameState.INTRO},
             assets.menuFont,
             uiViewport
@@ -483,7 +577,7 @@ public class Main extends ApplicationAdapter {
                 batch.draw(assets.gameOverBackground, 0, 0, UI_WIDTH, UI_HEIGHT);
 
                 highScoreFont.draw(batch, "HIGH SCORE", 100, 450);
-                highScoreFont.draw(batch, playerName + " you scored: " + finalScore, 100, 600);
+                highScoreFont.draw(batch, playerName + "\nYou scored: " + finalScore, 100, 720);
 
                 int y = 380;
                 for (Highscore.Entry e : top5) {
